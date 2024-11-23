@@ -29,12 +29,16 @@ const HotelFilter = () => {
     if (filter === "") {
       setFilteredHotels(hotels); 
     } else {
-      const result = hotels.filter((hotel) => 
-        identifyHotelType(hotel.name) === filter
-      );
+      const result = hotels.filter((hotel) => {
+        const nameMatch = identifyHotelType(hotel.name) === filter;
+        const descriptionMatch = hotel.description && hotel.description.toLowerCase().includes(filter.toLowerCase());
+  
+        return nameMatch || (!nameMatch && descriptionMatch);
+      });
       setFilteredHotels(result);
     }
   };
+  
 
   const fetchHotels = async () => {
     try {
