@@ -1,17 +1,8 @@
 import express from 'express';
-import {
-  getAllItemsController,
-  createItemController,
-  updateItemController,
-  deleteItemController,
-} from '../controllers/accommodation.controller';
+import { getAllData } from '../controllers/accommodation.controller.js';  
 
 const router = express.Router();
 
-
-router.get('/items', getAllItemsController); 
-router.post('/items', createItemController); 
-router.put('/items/:id', updateItemController); 
-router.delete('/items/:id', deleteItemController); 
+router.get('/', getAllData);
 
 export default router;
