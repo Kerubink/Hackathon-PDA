@@ -1,3 +1,4 @@
+
 function Header(){
     return(
         <header className="flex flex-row">
@@ -8,7 +9,6 @@ function Header(){
                 <li><i class="fa-solid fa-bed"></i>Resorts</li>
             </ul>
         </header>
-
         
     );
 };
