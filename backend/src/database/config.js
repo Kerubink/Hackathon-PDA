@@ -1,21 +1,24 @@
 import { Sequelize } from 'sequelize';
+import dotenv from 'dotenv';
 
-const sequelize = new Sequelize('hackathon_1bbk', 'hackathon_1bbk_user', '9eJrr6kxmoyny2wo40ym1nlWXeeATzIp', {
-  host: 'dpg-ct0vbf52ng1s73e2nrig-a.oregon-postgres.render.com',
+dotenv.config();
+
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST,
   dialect: 'postgres',
-  port: 5432,
+  port: process.env.DB_PORT,
   logging: console.log,
   pool: {
     max: 10,
     min: 0,
     acquire: 120000,
-    idle: 120000
+    idle: 120000,
   },
   dialectOptions: {
     ssl: {
-      require: true,
-      rejectUnauthorized: false
-    }
+      require: process.env.DB_SSL === 'true',
+      rejectUnauthorized: false,
+    },
   },
 });
 
