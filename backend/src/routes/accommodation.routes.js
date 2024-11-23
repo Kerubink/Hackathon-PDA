@@ -1,17 +1,8 @@
-import express from 'express';
-import {
-  getAllItemsController,
-  createItemController,
-  updateItemController,
-  deleteItemController,
-} from '../controllers/accommodation.controller';
+const express = require('express');
+const { getAllData } = require('../controllers/getAllController');
 
 const router = express.Router();
 
+router.get('/', getAllData);
 
-router.get('/items', getAllItemsController); 
-router.post('/items', createItemController); 
-router.put('/items/:id', updateItemController); 
-router.delete('/items/:id', deleteItemController); 
-
-export default router;
+module.exports = router;
