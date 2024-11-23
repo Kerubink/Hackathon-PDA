@@ -1,13 +1,11 @@
-const sequelize = require('../config/database');
+import { sequelize } from '../database/config.js';
 
-const getAllData = async (req, res) => {
+export const getAllData = async (req, res) => {
   try {
-    const [results] = await sequelize.query('SELECT * FROM your_table_name');
+    const [results] = await sequelize.query('SELECT * FROM hotels');
     res.status(200).json(results);
   } catch (error) {
     console.error('Erro ao buscar dados:', error);
     res.status(500).json({ error: 'Erro ao buscar dados do banco.' });
   }
 };
-
-module.exports = { getAllData };
