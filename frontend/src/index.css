@@ -2,18 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer base {
     body {
       font-family: 'Poppins', sans-serif;
-      background-color: white; /* cor de fundo */
+      background-color: white; 
       color: #1E1E1E;
       width: 100vw;
       height: 100vw;
     }
-    
-    
-   
   }
   
   @layer components {
