@@ -1,0 +1,68 @@
+name: Vite + React CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # Configura Node.js
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    # Instalar dependências e rodar build no frontend
+    - name: Install dependencies and build frontend
+      run: |
+        cd frontend
+        npm ci
+        npm run build
+
+    # Rodar testes no frontend
+    - name: Run tests in frontend
+      run: |
+        cd frontend
+        npm test
+
+  backend:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # Configura Node.js
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    # Instalar dependências e rodar build no backend
+    - name: Install dependencies and build backend
+      run: |
+        cd backend
+        npm ci
+        npm run build
+
+    # Rodar testes no backend
+    - name: Run tests in backend
+      run: |
+        cd backend
+        npm test
