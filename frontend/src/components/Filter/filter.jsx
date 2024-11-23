@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 
 const HotelFilter = () => {
-  const [hotels, setHotels] = useState([]); // Dados vindos da API
-  const [filteredHotels, setFilteredHotels] = useState([]); // Dados filtrados
-  const [filter, setFilter] = useState("");
-  const [loading, setLoading] = useState(true); // Estado para exibir o carregamento
-  const [error, setError] = useState(null); // Estado para exibir erros
+  const [hotels, setHotels] = useState([]); 
+  const [filteredHotels, setFilteredHotels] = useState([]);
+  const [filter, setFilter] = useState(""); 
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null); 
 
-  // Função para identificar o tipo de hospedagem usando regex
   const identifyHotelType = (name) => {
     const regexTypes = {
       hotel: /hotel/i,
@@ -23,25 +22,23 @@ const HotelFilter = () => {
         return type;
       }
     }
-    return "unknown"; // Caso não identifique nenhum tipo
+    return "unknown";
   };
 
-  // Função para filtrar os hotéis
   const filterHotels = () => {
     if (filter === "") {
-      setFilteredHotels(hotels); // Mostra todos se o filtro estiver vazio
+      setFilteredHotels(hotels); 
     } else {
-      const result = hotels.filter((hotel) =>
+      const result = hotels.filter((hotel) => 
         identifyHotelType(hotel.name) === filter
       );
       setFilteredHotels(result);
     }
   };
 
-  // Requisição para buscar hotéis na API
   const fetchHotels = async () => {
     try {
-      const response = await fetch("https://hackathon-pda.onrender.com/api"); // Substitua com a rota correta
+      const response = await fetch("https://hackathon-pda.onrender.com/api");
       if (!response.ok) {
         throw new Error("Erro ao buscar os hotéis.");
       }
@@ -56,11 +53,11 @@ const HotelFilter = () => {
   };
 
   useEffect(() => {
-    fetchHotels(); // Carrega os hotéis ao montar o componente
+    fetchHotels(); 
   }, []);
 
   useEffect(() => {
-    filterHotels(); // Filtra os hotéis sempre que o filtro ou os hotéis mudarem
+    filterHotels(); 
   }, [filter, hotels]);
 
   if (loading) {
@@ -90,7 +87,7 @@ const HotelFilter = () => {
             <div key={hotel.id}>
               <h3>{hotel.name}</h3>
               <p>{hotel.description}</p>
-              {/* Adicione outras informações do hotel conforme necessário */}
+              <p>Tipo: {identifyHotelType(hotel.name)}</p>
             </div>
           ))
         ) : (
