@@ -1,28 +1,74 @@
 import React, { useState, useEffect } from "react";
 
 const HotelFilter = () => {
-  const [hotels, setHotels] = useState([]); 
+  const [hotels, setHotels] = useState([]);
   const [filteredHotels, setFilteredHotels] = useState([]);
   const [filter, setFilter] = useState(""); 
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null); 
 
-  const identifyHotelType = (name) => {
-    const regexTypes = {
-      hotel: /hotel/i,
-      pousada: /pousada|inn|guest\s?house/i,
-      hostel: /hostel|albergue|backpackers/i,
-      resort: /resort/i,
-      hotelFazenda: /fazenda|country/i,
+  const identifyHotelType = (hotel) => {
+    const types = {
+      hotel: /hotel|luxury|spa/i,
+      pousada: /pousada|inn|guest\s?house|eco|chalé/i,
+      hostel: /hostel|albergue|backpackers|dormitory/i,
+      resort: /resort|piscina|campo\s?de\s?golfe/i,
+      hotelFazenda: /hotel fazenda|fazenda|country|rural/i,
       flat: /flat|apart\s?hotel|aparthotel/i,
     };
 
-    for (const [type, regex] of Object.entries(regexTypes)) {
-      if (regex.test(name)) {
-        return type;
+    const scores = {
+      hotel: 0,
+      pousada: 0,
+      hostel: 0,
+      resort: 0,
+      hotelFazenda: 0,
+      flat: 0,
+    };
+
+    if (hotel.type) {
+      scores[hotel.type] += 5; 
+    }
+
+    if (hotel.name) {
+      Object.entries(types).forEach(([type, regex]) => {
+        if (regex.test(hotel.name)) {
+          scores[type] += 3;
+        }
+      });
+    }
+    if (hotel.description) {
+      Object.entries(types).forEach(([type, regex]) => {
+        if (regex.test(hotel.description)) {
+          scores[type] += 2; 
+        }
+      });
+    }
+
+    if (hotel.price) {
+      if (hotel.price > 300) {
+        scores.resort += 2;
+        scores.hotel += 1;
+      } else if (hotel.price < 50) {
+        scores.hostel += 2;
+        scores.pousada += 1;
       }
     }
-    return "unknown";
+
+    if (hotel.amenities) {
+      if (hotel.amenities.includes("piscina") || hotel.amenities.includes("campo de golfe")) {
+        scores.resort += 3;
+        scores.hotel += 2;
+      }
+      if (hotel.amenities.includes("Wi-Fi gratuito")) {
+        scores.hostel += 1; 
+      }
+    }
+
+    const maxScore = Math.max(...Object.values(scores));
+    const classifiedType = Object.keys(scores).find(type => scores[type] === maxScore);
+
+    return { type: classifiedType, scores }; 
   };
 
   const filterHotels = () => {
@@ -30,15 +76,14 @@ const HotelFilter = () => {
       setFilteredHotels(hotels); 
     } else {
       const result = hotels.filter((hotel) => {
-        const nameMatch = identifyHotelType(hotel.name) === filter;
-        const descriptionMatch = hotel.description && hotel.description.toLowerCase().includes(filter.toLowerCase());
-  
-        return nameMatch || (!nameMatch && descriptionMatch);
+        const { type, scores } = identifyHotelType(hotel);
+        console.log(`Nome: ${hotel.name}`);
+        console.log(`Pontuação: ${JSON.stringify(scores)}`);
+        return type === filter;
       });
       setFilteredHotels(result);
     }
   };
-  
 
   const fetchHotels = async () => {
     try {
@@ -91,7 +136,7 @@ const HotelFilter = () => {
             <div key={hotel.id}>
               <h3>{hotel.name}</h3>
               <p>{hotel.description}</p>
-              <p>Tipo: {identifyHotelType(hotel.name)}</p>
+              <p>Tipo: {identifyHotelType(hotel).type}</p>
             </div>
           ))
         ) : (
