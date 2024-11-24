@@ -6,6 +6,15 @@ const HotelFilter = () => {
   const [filter, setFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [counts, setCounts] = useState({
+    hotel: 0,
+    pousada: 0,
+    hostel: 0,
+    resort: 0,
+    hotelFazenda: 0,
+    flat: 0,
+    total: 0,
+  });
 
   const identifyHotelType = (hotel) => {
     const types = {
@@ -33,14 +42,14 @@ const HotelFilter = () => {
     if (hotel.name) {
       Object.entries(types).forEach(([type, regex]) => {
         if (regex.test(hotel.name)) {
-          scores[type] += 4; // Nome tem maior peso
+          scores[type] += 4;
         }
       });
     }
     if (hotel.description) {
       Object.entries(types).forEach(([type, regex]) => {
         if (regex.test(hotel.description)) {
-          scores[type] += 3; // Descrição tem peso médio
+          scores[type] += 3;
         }
       });
     }
@@ -74,7 +83,6 @@ const HotelFilter = () => {
 
     const maxScore = Math.max(...Object.values(scores));
     if (maxScore === 0) {
-      // Fallback para itens zerados
       if (hotel.price && hotel.price > 300) return { type: "resort", scores };
       if (hotel.price && hotel.price < 100) return { type: "hostel", scores };
       return { type: "hotel", scores };
@@ -96,6 +104,25 @@ const HotelFilter = () => {
       });
       setFilteredHotels(result);
     }
+  };
+
+  const calculateCounts = () => {
+    const newCounts = {
+      hotel: 0,
+      pousada: 0,
+      hostel: 0,
+      resort: 0,
+      hotelFazenda: 0,
+      flat: 0,
+      total: hotels.length,
+    };
+
+    hotels.forEach((hotel) => {
+      const { type } = identifyHotelType(hotel);
+      newCounts[type] += 1;
+    });
+
+    setCounts(newCounts);
   };
 
   const fetchHotels = async () => {
@@ -120,6 +147,7 @@ const HotelFilter = () => {
 
   useEffect(() => {
     filterHotels();
+    calculateCounts();
   }, [filter, hotels]);
 
   if (loading) {
@@ -134,13 +162,13 @@ const HotelFilter = () => {
     <div>
       <h2>Filtrar Hotéis</h2>
       <select onChange={(e) => setFilter(e.target.value)} value={filter}>
-        <option value="">Todos</option>
-        <option value="hotel">Hotel</option>
-        <option value="pousada">Pousada</option>
-        <option value="hostel">Hostel</option>
-        <option value="resort">Resort</option>
-        <option value="hotelFazenda">Hotel Fazenda</option>
-        <option value="flat">Flat/Apart Hotel</option>
+        <option value="">Todos ({counts.total})</option>
+        <option value="hotel">Hotel ({counts.hotel})</option>
+        <option value="pousada">Pousada ({counts.pousada})</option>
+        <option value="hostel">Hostel ({counts.hostel})</option>
+        <option value="resort">Resort ({counts.resort})</option>
+        <option value="hotelFazenda">Hotel Fazenda ({counts.hotelFazenda})</option>
+        <option value="flat">Flat/Apart Hotel ({counts.flat})</option>
       </select>
 
       <div>
