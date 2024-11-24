@@ -11,7 +11,7 @@ export default function SearchAccommodation() {
             <div>
                 <FilterButton />
             </div>
-            
+
             <div className="flex flex-wrap justify-center items-center space-y-6 mt-10 md:space-y-0 md:space-x-6 p-4">
                 <div>
                     <Card 
