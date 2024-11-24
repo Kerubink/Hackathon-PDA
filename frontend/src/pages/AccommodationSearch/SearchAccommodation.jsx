@@ -1,5 +1,15 @@
+import Navbar from "../../components/header";
+import FilterButton from "../../components/ButtonFilter/filterButton";
+
 export default function SearchAccommodation() {
     return (
-        <div>ola</div>
+        <>
+            <Navbar />
+            
+            <div>
+                <FilterButton />
+            </div>
+
+        </>
     )
 }
