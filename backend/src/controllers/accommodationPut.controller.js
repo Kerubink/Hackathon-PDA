@@ -1,3 +1,5 @@
+import { sequelize } from '../database/config.js';
+
 export const updateAccommodation = async (req, res) => {
     try {
       const {

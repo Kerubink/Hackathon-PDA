@@ -1,3 +1,5 @@
+import { sequelize } from '../database/config.js';
+
 export const deleteAccommodation = async (req, res) => {
     try {
       const { id } = req.params;
