@@ -43,7 +43,7 @@ const Header = () => {
       <div
         className={`md:hidden ${
           isMenuOpen ? 'block' : 'hidden'
-        } absolute top-full left-0 w-full bg-gray-100 z-50`} // Configurações para ser absoluto
+        } absolute top-full left-0 w-full bg-gray-100 z-50`} 
         id="mobile-menu"
       >
         <ul className="flex flex-col gap-5 p-5">
