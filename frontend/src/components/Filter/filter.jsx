@@ -21,8 +21,8 @@ const HotelFilter = () => {
       hotel: /hotel|luxury|spa|business/i,
       pousada: /pousada|inn|guest\s?house|eco|chalé/i,
       hostel: /hostel|albergue|backpackers|dormitory/i,
-      resort: /resort|piscina|campo\s?de\s?golfe|parque/i,
-      hotelFazenda: /hotel fazenda|fazenda|country|rural|natureza/i,
+      resort: /resort|piscinas termais|parque aquático|natureza exuberante|ofurô|lago|litoral|lazer completo|praia exclusiva/i,
+      hotelFazenda: /hotel fazenda|fazenda|rural|sítio|natureza/i,
       flat: /flat|apart\s?hotel|aparthotel|studio|residencial/i,
     };
 
@@ -35,62 +35,51 @@ const HotelFilter = () => {
       flat: 0,
     };
 
-    if (hotel.type) {
-      scores[hotel.type] += 5;
-    }
+    const foundKeywords = {
+      name: {},
+      description: {},
+    };
 
-    if (hotel.name) {
+    if (hotel.type) scores[hotel.type] += 5;
+
+    const analyzeText = (text, weight, field) => {
+      if (!text) return;
       Object.entries(types).forEach(([type, regex]) => {
-        if (regex.test(hotel.name)) {
-          scores[type] += 4;
+        const matches = text.match(regex);
+        if (matches) {
+          scores[type] += matches.length * weight;
+          if (!foundKeywords[field][type]) {
+            foundKeywords[field][type] = [];
+          }
+          foundKeywords[field][type].push(...matches);
         }
       });
-    }
-    if (hotel.description) {
-      Object.entries(types).forEach(([type, regex]) => {
-        if (regex.test(hotel.description)) {
-          scores[type] += 3;
-        }
-      });
-    }
+    };
 
-    if (hotel.price) {
-      if (hotel.price > 300) {
-        scores.resort += 3;
-        scores.hotel += 2;
-        scores.flat += 1;
-      } else if (hotel.price < 100) {
-        scores.hostel += 3;
-        scores.pousada += 2;
-      } else {
-        scores.hotel += 2;
-        scores.pousada += 1;
-      }
-    }
+    analyzeText(hotel.name, 5, "name");
+    analyzeText(hotel.description, 3, "description");
 
     if (hotel.amenities) {
-      if (hotel.amenities.includes("piscina") || hotel.amenities.includes("campo de golfe")) {
-        scores.resort += 5;
-      }
-      if (hotel.amenities.includes("Wi-Fi gratuito") || hotel.amenities.includes("cozinha compartilhada")) {
-        scores.hostel += 3;
-      }
-      if (hotel.amenities.includes("natureza") || hotel.amenities.includes("trilha")) {
-        scores.hotelFazenda += 4;
-        scores.pousada += 2;
-      }
+      if (hotel.amenities.includes("piscina")) scores.resort += 5;
+      if (hotel.amenities.includes("Wi-Fi gratuito")) scores.hostel += 4;
+      if (hotel.amenities.includes("natureza")) scores.hotelFazenda += 4;
+    }
+
+    if (hotel.location) {
+      if (/praia|litoral/i.test(hotel.location)) scores.resort += 4;
+      if (/campo|interior/i.test(hotel.location)) scores.hotelFazenda += 3;
     }
 
     const maxScore = Math.max(...Object.values(scores));
-    if (maxScore === 0) {
-      if (hotel.price && hotel.price > 300) return { type: "resort", scores };
-      if (hotel.price && hotel.price < 100) return { type: "hostel", scores };
-      return { type: "hotel", scores };
-    }
-
     const classifiedType = Object.keys(scores).find(
       (type) => scores[type] === maxScore
     );
+
+    console.log(`Hospedagem: ${hotel.name}`);
+    console.log("Palavras-chave encontradas no nome:", foundKeywords.name);
+    console.log("Palavras-chave encontradas na descrição:", foundKeywords.description);
+    console.log("Pontuações finais por tipo:", scores);
+
     return { type: classifiedType, scores };
   };
 
