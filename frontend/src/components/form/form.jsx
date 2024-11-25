@@ -5,18 +5,18 @@ const Form = () => {
     nome: "",
     cep: "",
     uf: "",
-    pais: "Brasil", // Padrão Brasil
+    pais: "Brasil", 
     cidade: "",
     bairro: "",
     descricao: "",
-    arquivo: null,
+    arquivo: "",
     longitude: "",
     latitude: "",
     opcoes: [],
   });
 
-  const [cepError, setCepError] = useState(""); // Mensagem de erro para CEP
-  const [loadingCep, setLoadingCep] = useState(false); // Estado para mostrar carregamento
+  const [cepError, setCepError] = useState(""); 
+  const [loadingCep, setLoadingCep] = useState(false); 
 
   const opcoesDisponiveis = ["WiFi gratuito", "Café da manhã", "Mini-bar"];
 
@@ -55,21 +55,19 @@ const Form = () => {
         }
         const data = await response.json();
 
-        // Verifica se o CEP retornou erro
         if (data.errors) {
           setCepError("CEP inválido ou não encontrado.");
           setLoadingCep(false);
           return;
         }
 
-        // Atualiza os campos automaticamente com os dados retornados
         setFormData((prevState) => ({
           ...prevState,
           bairro: data.neighborhood || "",
           cidade: data.city || "",
           uf: data.state || "",
         }));
-        setCepError(""); // Limpa erros
+        setCepError(""); 
       } catch (error) {
         console.error("Erro ao buscar CEP:", error);
         setCepError("Erro ao buscar CEP. Verifique se é válido.");
@@ -87,31 +85,64 @@ const Form = () => {
     }
   }, [formData.cep]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
 
-    // Verificação de campos obrigatórios
-    if (!formData.nome || !formData.cep || !formData.uf || !formData.cidade || !formData.bairro || !formData.descricao || !formData.arquivo || formData.opcoes.length === 0) {
-      alert("Por favor, preencha todos os campos obrigatórios.");
-      return;
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+  
+    const dataToSend = {
+      name: formData.nome || "Nome do espaço",
+      type: formData.seuEspaco || null,
+      stars: parseInt(formData.stars || 0, 10),
+      latitude: formData.latitude || "0.000000",
+      longitude: formData.longitude || "0.000000",
+      description: formData.descricao || "",
+      address: `${formData.cidade}, ${formData.uf}`,
+      district: formData.bairro || "",
+      city: formData.cidade || "",
+      state: formData.uf || "",
+      country: formData.pais || "BR",
+      placeId: formData.placeId || "placeholder-place-id",
+      thumb: formData.arquivo ? URL.createObjectURL(formData.arquivo) : null,
+      images: [],
+      amenities: formData.opcoes || [],
+      pois: [],
+      reviews: [],
+      cnpj: "12.345.678/0001-90",
+    };
+  
+    console.log("Dados a serem enviados:", dataToSend);
+  
+    try {
+      const response = await fetch("https://hackathon-pda.onrender.com/api", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToSend),
+      });
+  
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(
+          `Erro ao enviar os dados: ${JSON.stringify(errorResponse)}`
+        );
+      }
+  
+      const responseData = await response.json();
+      console.log("Dados enviados com sucesso:", responseData);
+    } catch (error) {
+      console.error("Erro ao enviar dados:", error);
     }
-
-    if (cepError) {
-      alert("Preencha o CEP corretamente antes de enviar.");
-      return;
-    }
-
-    console.log(formData);
   };
+  
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-70 backdrop-blur-sm z-50">
       <form
-
         onSubmit={handleSubmit}
         className="bg-white shadow-md rounded-lg p-6 w-full max-w-md relative"
       >
-        <i class="fa-solid fa-xmark text-[30px] text-[#192A3D] cursor-pointer absolute top-[15px] right-[20px]"></i>
+        <i className="fa-solid fa-xmark text-[30px] text-[#192A3D] cursor-pointer absolute top-[15px] right-[20px]"></i>
         <h1 className="text-lg font-bold text-gray-800 mb-6 text-center">
           Seja um <span className="text-[#009EF9]">anfitrião.</span>
         </h1>
@@ -129,6 +160,7 @@ const Form = () => {
           className="block w-full p-2 border border-gray-300 rounded mt-1 mb-4"
           required
         />
+
         <label
           htmlFor="seuEspaco"
           className="block text-sm font-medium text-gray-700"
@@ -153,6 +185,7 @@ const Form = () => {
           <option value="Hotel Fazenda">Hotel Fazenda</option>
           <option value="Flat">Flat</option>
         </select>
+
         <label htmlFor="cep" className="block text-sm font-medium text-gray-700">
           CEP
         </label>
@@ -240,42 +273,42 @@ const Form = () => {
         <div className="flex items-center space-x-4 mb-4">
           <label
             htmlFor="arquivo"
-            className="cursor-pointer flex items-center justify-center w-12 h-12 rounded-full bg-gray-200 text-[#009EF9] hover:bg-[#009EF9] hover:text-white transition"
+            className="cursor-pointer text-blue-500 text-sm"
           >
-            <i className="fa-solid fa-cloud-arrow-up text-2xl"></i>
-            <input
-              type="file"
-              name="arquivo"
-              id="arquivo"
-              onChange={handleFileChange}
-              className="hidden"
-              required
-            />
+            Escolher arquivo
           </label>
-          <span className="text-gray-500">
-            {formData.arquivo ? formData.arquivo.name : "Nenhum arquivo selecionado"}
-          </span>
+          <input
+            type="file"
+            name="arquivo"
+            id="arquivo"
+            onChange={handleFileChange}
+            className="hidden"
+            required
+          />
+          <span>{formData.arquivo ? formData.arquivo.name : "Nenhum arquivo selecionado"}</span>
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-4">
-          {opcoesDisponiveis.map((opcao) => (
-            <button
-              type="button"
-              key={opcao}
-              onClick={() => toggleOpcao(opcao)}
-              className={`px-4 py-2 rounded-lg border ${formData.opcoes.includes(opcao)
-                ? "bg-[#009EF9] text-white"
-                : "bg-gray-200 text-[#009EF9]"
-                } hover:bg-[#009EF9] hover:text-white transition`}
-            >
-              {opcao}
-            </button>
-          ))}
+        <div className="mb-4">
+          <p className="font-medium text-sm text-gray-700">Opções adicionais</p>
+          <div className="grid grid-cols-2 gap-2">
+            {opcoesDisponiveis.map((opcao) => (
+              <div key={opcao} className="flex items-center">
+                <input
+                  type="checkbox"
+                  id={opcao}
+                  checked={formData.opcoes.includes(opcao)}
+                  onChange={() => toggleOpcao(opcao)}
+                  className="mr-2"
+                />
+                <label htmlFor={opcao}>{opcao}</label>
+              </div>
+            ))}
+          </div>
         </div>
 
         <button
           type="submit"
-          className="w-full bg-[#009EF9] text-white font-semibold p-3 rounded"
+          className="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg mt-4"
         >
           Enviar
         </button>

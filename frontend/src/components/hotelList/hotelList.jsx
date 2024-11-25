@@ -40,7 +40,6 @@ const HotelList = () => {
         event.target.src = defaultImage;
     };
 
-    // Lógica de Paginação
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentHotels = hotels.slice(indexOfFirstItem, indexOfLastItem);
