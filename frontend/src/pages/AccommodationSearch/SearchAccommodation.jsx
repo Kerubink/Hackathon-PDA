@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function SearchAccommodation() {
+  const [filteredData, setFilteredData] = useState([]);
   const [keyword, setKeyword] = useState("");
   const navigate = useNavigate();
 
@@ -23,13 +24,13 @@ export default function SearchAccommodation() {
     <>
       <Header />
 
-      <div className="flex w-full items-center justify-center p-6 gap-5">
+      <div className="flex w-full items-center justify-center p-6 gap-5  border-b">
         <div className="flex gap-4 overflow-y-auto">
           <button
             onClick={handleShowAll}
             className="px-4 py-2 flex flex-col flex-nowrap justify-center items-center gap-1 min-w-fit text-black rounded-md hover:scale-95"
           >
-            <i className="fa-solid fa-filter text-[#000]"></i>Todos
+            <i class="fa-solid fa-border-all"></i>Todos
           </button>
           <button
             onClick={() => handleFilterClick("hotel")}
@@ -69,7 +70,7 @@ export default function SearchAccommodation() {
           </button>
         </div>
 
-        <FilterButton setKeyword={setKeyword} />
+        <FilterButton setFilteredData={setFilteredData} />
       </div>
 
       <HotelList keyword={keyword} />

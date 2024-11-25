@@ -1,34 +1,56 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import IconFilter from "./assets/icon-filter.png";
 
-const FilterButton = ({ setKeyword }) => {
+const FilterButton = ({ setKeyword, setHotels }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [stars, setStars] = useState(null); 
   const navigate = useNavigate();
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const closeDropdown = (e) => {
-    if (!e.target.closest("#dropdown-menu") && !e.target.closest("#filter-button")) {
+    if (
+      !e.target.closest("#dropdown-menu") &&
+      !e.target.closest("#filter-button")
+    ) {
       setIsOpen(false);
     }
   };
 
   const handleFilterClick = (keyword) => {
     setKeyword(keyword);
-
     navigate(`?filter=${keyword}`);
-
-    setIsOpen(false); 
+    setIsOpen(false);
   };
 
   const handleShowAll = () => {
     setKeyword("");
-
+    setStars(null); 
     navigate("?");
-
-    setIsOpen(false); 
+    setIsOpen(false);
   };
+
+  const handleStarsFilter = (stars) => {
+    setStars(stars); 
+    setIsOpen(false);
+  };
+
+  const fetchHotels = async () => {
+    try {
+      const response = await fetch("https://hackathon-pda.onrender.com/api");
+      const data = await response.json();
+      const filteredHotels = stars
+        ? data.filter((hotel) => hotel.stars === stars)
+        : data;
+      setHotels(filteredHotels); 
+    } catch (error) {
+      console.error("Erro ao buscar os dados dos hotéis:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchHotels(); 
+  }, [stars]); 
 
   useEffect(() => {
     document.addEventListener("click", closeDropdown);
@@ -39,13 +61,13 @@ const FilterButton = ({ setKeyword }) => {
     <section>
       <div
         id="filter-button"
-        className="bg-[#009EF9] flex items-center rounded-[5px] p-2 w-32 h-9 shadow-md cursor-pointer hover:scale-[98%]"
+        className="text-black flex items-center rounded-[10px] border-[1px] border-gray-400 p-2 w-32 h-15 cursor-pointer hover:border-black"
         onClick={toggleDropdown}
       >
         <div className="size-5 ml-2 mr-5">
-          <img src={IconFilter} alt="icon filter" />
+          <i className="fa-solid fa-filter"></i>
         </div>
-        <p className="text-white">Filtrar</p>
+        <p className="text-black">Filtrar</p>
       </div>
 
       {isOpen && (
@@ -53,50 +75,25 @@ const FilterButton = ({ setKeyword }) => {
           id="dropdown-menu"
           className="absolute mt-2 right-30 z-10 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5"
         >
-          <div className="py-2 border-b border-gray-200">
-            <button
-              onClick={() => handleFilterClick("hotel")}
-              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            >
-              <i className="fa-solid fa-hotel text-[#009EF9]"></i>Hotéis
-            </button>
-            <button
-              onClick={() => handleFilterClick("pousada")}
-              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            >
-              <i className="fa-solid fa-bed text-[#009EF9]"></i>Pousadas
-            </button>
-            <button
-              onClick={() => handleFilterClick("resort")}
-              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            >
-              <i className="fa-solid fa-bed text-[#009EF9]"></i>Resorts
-            </button>
-            <button
-              onClick={() => handleFilterClick("hostel")}
-              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            >
-              <i className="fa-solid fa-hotel text-[#009EF9]"></i>Hostels
-            </button>
-            <button
-              onClick={() => handleFilterClick("hotel fazenda")}
-              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            >
-              <i className="fa-solid fa-hotel text-[#009EF9]"></i>Hotel Fazenda
-            </button>
-            <button
-              onClick={() => handleFilterClick("flat")}
-              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            >
-              <i className="fa-solid fa-building text-[#009EF9]"></i>Flat
-            </button>
+          <div className="py-2">
+            <h3 className="px-4 py-2 text-sm text-gray-700">Filtrar por Estrelas</h3>
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                onClick={() => handleStarsFilter(star)}
+                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                <i className="fa-solid fa-star text-[#009EF9]"></i>{star} Estrela{star > 1 ? "s" : ""}
+              </button>
+            ))}
           </div>
+
           <div className="py-2">
             <button
               onClick={handleShowAll}
               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
             >
-              <i className="fa-solid fa-eye text-[#009EF9]"></i>limpar filtro
+              <i className="fa-solid fa-eye text-[#009EF9]"></i>Limpar filtro
             </button>
           </div>
         </div>

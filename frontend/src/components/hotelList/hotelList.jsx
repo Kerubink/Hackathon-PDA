@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom"; 
+import { useLocation } from "react-router-dom";
 import Card from "../Card/card";
 import defaultImage from "../../assets/404.png";
 
@@ -7,19 +7,23 @@ const HotelList = () => {
   const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [keyword, setKeyword] = useState("");
+  const [starsFilter, setStarsFilter] = useState("");
 
   const location = useLocation();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const filter = params.get("filter");
-    setKeyword(filter || ""); 
+    const stars = params.get("stars");
+    
+    setKeyword(filter || "");
+    setStarsFilter(stars || "");
 
     const fetchData = async () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `https://hackathon-pda.onrender.com/api?keyword=${filter || ""}`
+          `https://hackathon-pda.onrender.com/api?keyword=${filter || ""}&stars=${stars || ""}`
         );
         const data = await response.json();
         setHotels(Array.isArray(data) ? data : []); 
@@ -32,7 +36,7 @@ const HotelList = () => {
     };
 
     fetchData();
-  }, [location.search]); 
+  }, [location.search]);
 
   const handleImageError = (event) => {
     event.target.src = defaultImage;
