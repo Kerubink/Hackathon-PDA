@@ -23,15 +23,7 @@ const Header = () => {
       </button>
 
       <ul className="hidden md:flex gap-10 items-center">
-        <li className="cursor-pointer transform hover:scale-95 transition-transform duration-200">
-          <i className="fa-solid fa-hotel text-[#009EF9]"></i> Hoteis
-        </li>
-        <li className="cursor-pointer transform hover:scale-95 transition-transform duration-200">
-          <i className="fa-solid fa-bed text-[#009EF9]"></i> Pousadas
-        </li>
-        <li className="cursor-pointer transform hover:scale-95 transition-transform duration-200">
-          <i className="fa-solid fa-bed text-[#009EF9]"></i> Resorts
-        </li>
+        <button className='border-2 border-[#192A3D] rounded-full p-2 px-5 text-[#192A3D] text-[14px] font-semibold shadow-md  hover:scale-95 transition-all'>Anuncie seu espaço</button>
       </ul>
 
       <div
@@ -40,15 +32,7 @@ const Header = () => {
         id="mobile-menu"
       >
         <ul className="flex flex-col gap-5 p-5">
-          <li className="cursor-pointer transform hover:scale-95 transition-transform duration-200">
-            <i className="fa-solid fa-hotel text-[#009EF9]"></i> Hoteis
-          </li>
-          <li className="cursor-pointer transform hover:scale-95 transition-transform duration-200">
-            <i className="fa-solid fa-bed text-[#009EF9]"></i> Pousadas
-          </li>
-          <li className="cursor-pointer transform hover:scale-95 transition-transform duration-200">
-            <i className="fa-solid fa-bed text-[#009EF9]"></i> Resorts
-          </li>
+          <button className='border-2 border-[#192A3D] rounded-full p-2 px-5 text-[#192A3D] text-[14px] font-semibold'>Anuncie seu espaço</button>
         </ul>
       </div>
     </header>
