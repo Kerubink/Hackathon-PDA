@@ -107,9 +107,11 @@ const Form = () => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-70 backdrop-blur-sm z-50">
       <form
+
         onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded-lg p-6 w-full max-w-md"
+        className="bg-white shadow-md rounded-lg p-6 w-full max-w-md relative"
       >
+        <i class="fa-solid fa-xmark text-[30px] text-[#192A3D] cursor-pointer absolute top-[15px] right-[20px]"></i>
         <h1 className="text-lg font-bold text-gray-800 mb-6 text-center">
           Seja um <span className="text-[#009EF9]">anfitrião.</span>
         </h1>
@@ -127,7 +129,30 @@ const Form = () => {
           className="block w-full p-2 border border-gray-300 rounded mt-1 mb-4"
           required
         />
-
+        <label
+          htmlFor="seuEspaco"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Seu espaço é
+        </label>
+        <select
+          name="seuEspaco"
+          id="seuEspaco"
+          value={formData.seuEspaco || ""}
+          onChange={handleChange}
+          className="block w-full p-2 border border-gray-300 rounded mt-1 mb-4"
+          required
+        >
+          <option value="" disabled>
+            Selecione
+          </option>
+          <option value="Hotel">Hotel</option>
+          <option value="Fazenda">Fazenda</option>
+          <option value="Resort">Resort</option>
+          <option value="Hostels">Hostels</option>
+          <option value="Hotel Fazenda">Hotel Fazenda</option>
+          <option value="Flat">Flat</option>
+        </select>
         <label htmlFor="cep" className="block text-sm font-medium text-gray-700">
           CEP
         </label>
@@ -238,11 +263,10 @@ const Form = () => {
               type="button"
               key={opcao}
               onClick={() => toggleOpcao(opcao)}
-              className={`px-4 py-2 rounded-lg border ${
-                formData.opcoes.includes(opcao)
-                  ? "bg-[#009EF9] text-white"
-                  : "bg-gray-200 text-[#009EF9]"
-              } hover:bg-[#009EF9] hover:text-white transition`}
+              className={`px-4 py-2 rounded-lg border ${formData.opcoes.includes(opcao)
+                ? "bg-[#009EF9] text-white"
+                : "bg-gray-200 text-[#009EF9]"
+                } hover:bg-[#009EF9] hover:text-white transition`}
             >
               {opcao}
             </button>
