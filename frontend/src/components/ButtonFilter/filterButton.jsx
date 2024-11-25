@@ -1,29 +1,42 @@
-import React, { useState } from "react";
-import IconFilter from "./assets/icon-filter.png"; // Certifique-se de ajustar o caminho do ícone
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import IconFilter from "./assets/icon-filter.png";
 
-const FilterButton = () => {
+const FilterButton = ({ setKeyword }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
-  // Alternar o estado do dropdown
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
+  const toggleDropdown = () => setIsOpen(!isOpen);
 
-  // Fechar o dropdown ao clicar fora
   const closeDropdown = (e) => {
     if (!e.target.closest("#dropdown-menu") && !e.target.closest("#filter-button")) {
       setIsOpen(false);
     }
   };
 
-  React.useEffect(() => {
+  const handleFilterClick = (keyword) => {
+    setKeyword(keyword);
+
+    navigate(`?filter=${keyword}`);
+
+    setIsOpen(false); 
+  };
+
+  const handleShowAll = () => {
+    setKeyword("");
+
+    navigate("?");
+
+    setIsOpen(false); 
+  };
+
+  useEffect(() => {
     document.addEventListener("click", closeDropdown);
     return () => document.removeEventListener("click", closeDropdown);
   }, []);
 
   return (
-    <section className="">
-      {/* Botão "Filtrar" */}
+    <section>
       <div
         id="filter-button"
         className="bg-[#009EF9] flex items-center rounded-[5px] p-2 w-32 h-9 shadow-md cursor-pointer hover:scale-[98%]"
@@ -32,76 +45,64 @@ const FilterButton = () => {
         <div className="size-5 ml-2 mr-5">
           <img src={IconFilter} alt="icon filter" />
         </div>
-
-        <div>
-          <p className="text-white">Filtrar</p>
-        </div>
+        <p className="text-white">Filtrar</p>
       </div>
 
-      {/* Dropdown */}
       {isOpen && (
         <div
           id="dropdown-menu"
           className="absolute mt-2 right-30 z-10 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5"
         >
-          {/* Categorias */}
           <div className="py-2 border-b border-gray-200">
-            <a
-              href="#"
+            <button
+              onClick={() => handleFilterClick("hotel")}
               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
             >
               <i className="fa-solid fa-hotel text-[#009EF9]"></i>Hotéis
-            </a>
-            <a
-              href="#"
+            </button>
+            <button
+              onClick={() => handleFilterClick("pousada")}
               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
             >
-              <i class="fa-solid fa-bed text-[#009EF9]"></i>Pousadas
-            </a>
-            <a
-              href="#"
+              <i className="fa-solid fa-bed text-[#009EF9]"></i>Pousadas
+            </button>
+            <button
+              onClick={() => handleFilterClick("resort")}
               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
             >
-              <i class="fa-solid fa-bed text-[#009EF9]"></i>Resorts
-            </a>
+              <i className="fa-solid fa-bed text-[#009EF9]"></i>Resorts
+            </button>
+            <button
+              onClick={() => handleFilterClick("hostel")}
+              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              <i className="fa-solid fa-hotel text-[#009EF9]"></i>Hostels
+            </button>
+            <button
+              onClick={() => handleFilterClick("hotel fazenda")}
+              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              <i className="fa-solid fa-hotel text-[#009EF9]"></i>Hotel Fazenda
+            </button>
+            <button
+              onClick={() => handleFilterClick("flat")}
+              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              <i className="fa-solid fa-building text-[#009EF9]"></i>Flat
+            </button>
           </div>
-
-          {/* Filtros */}
           <div className="py-2">
-            <label className="flex items-center px-4 py-1 gap-2 text-sm text-gray-700">
-              <input
-                type="checkbox"
-                className="form-checkbox rounded border-gray-300 text-blue-500 focus:ring-blue-400"
-              />
-              Menor preço
-            </label>
-            <label className="flex items-center px-4 py-1 gap-2 text-sm text-gray-700">
-              <input
-                type="checkbox"
-                className="form-checkbox rounded border-gray-300 text-blue-500 focus:ring-blue-400"
-              />
-              Maior preço
-            </label>
-            <label className="flex items-center px-4 py-1 gap-2 text-sm text-gray-700">
-              <input
-                type="checkbox"
-                className="form-checkbox rounded border-gray-300 text-blue-500 focus:ring-blue-400"
-              />
-              Wifi
-            </label>
-            <label className="flex items-center px-4 py-1 gap-2 text-sm text-gray-700">
-              <input
-                type="checkbox"
-                className="form-checkbox rounded border-gray-300 text-blue-500 focus:ring-blue-400"
-              />
-              Café da manhã
-            </label>
+            <button
+              onClick={handleShowAll}
+              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              <i className="fa-solid fa-eye text-[#009EF9]"></i>limpar filtro
+            </button>
           </div>
         </div>
       )}
     </section>
   );
 };
-
 
 export default FilterButton;

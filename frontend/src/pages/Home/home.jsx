@@ -2,9 +2,9 @@ import Header from "../../components/header/header"
 import imgPhone from "../../assets/Design_phone.png"
 import imgBckg from "../../assets/bckg.png"
 
-import Form from "../../components/form/form"
-
 import '../../style/media-home.css'
+import { Link } from "react-router"
+import { js } from '@eslint/js';
 
 export default function Home() {
     return (
@@ -18,9 +18,11 @@ export default function Home() {
                         <span className="text-[#009EF9]"> a hospitalidade do anfitrião começa na sua busca.</span>
                     </h3>
                     <div>
+                        <Link to="/search-for-accommodation">
                         <button className="py-2 px-10 bg-[#009EF9] text-[#fff] font-bold mt-3 rounded-[3px] text-[18px] shadow-md hover:scale-95 md:text-[25px]">
                             Buscar
                         </button>
+                        </Link>
                     </div>
                 </div>
                 <img className="w-[95%] z-10 animate-float md:w-[40%]" src={imgPhone} />
