@@ -1,5 +1,6 @@
 import StarsAvaliation from "../AvaliationStars/starsAvaliation";
 
+
 export default function Card({ image, avaliation, name, category, handdleImageerror }) {
     return (
         <section className="p-[10px] rounded-[10px] w-full h-auto min-h-[280px] shadow-[0_4px_6px_rgba(0,0,0,0.4)] cursor-pointer hover:translate-y-0.5 transition-all">
