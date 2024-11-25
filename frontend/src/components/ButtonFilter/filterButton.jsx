@@ -39,13 +39,13 @@ const FilterButton = ({ setKeyword }) => {
     <section>
       <div
         id="filter-button"
-        className="bg-[#009EF9] flex items-center rounded-[5px] p-2 w-32 h-9 shadow-md cursor-pointer hover:scale-[98%]"
+        className="border-2 border-[#009EF9] flex items-center rounded-[5px] p-2 w-32 h-9 shadow-md cursor-pointer hover:scale-[98%]"
         onClick={toggleDropdown}
       >
         <div className="size-5 ml-2 mr-5">
-          <img src={IconFilter} alt="icon filter" />
+          <img className="color" src={IconFilter} alt="icon filter" />
         </div>
-        <p className="text-white">Filtrar</p>
+        <p className="text-[#009EF9]">Filtrar</p>
       </div>
 
       {isOpen && (
