@@ -1,15 +1,15 @@
-import Header from "../../components/header"
+import Header from "../../components/header/header"
 import imgPhone from "../../assets/Design_phone.png"
 import imgBckg from "../../assets/bckg.png"
 
-import Form from "../../components/form"
+import Form from "../../components/form/form"
 
 import '../../style/media-home.css'
 
 export default function Home() {
     return (
         <>
-            <Form />
+           
             <Header />
             <div className="h-screen relative overflow-hidden flex flex-col justify-center items-center m-0 px-2 md:flex-row">
                 <div className="z-20 md:ml-[200px]">
