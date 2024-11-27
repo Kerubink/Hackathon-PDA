@@ -1,5 +1,7 @@
 import { sequelize } from '../database/config.js';
 import { filterByKeyword } from '../services/hotelService.js';
+import Hotel from '../models/accommodation.model.js'; 
+
 
 export const getAllData = async (req, res) => {
   try {
@@ -22,11 +24,12 @@ export const getAllData = async (req, res) => {
   }
 };
 
+
 export const createAccommodation = async (req, res) => {
   try {
     const {
       name,
-      type,
+      type, 
       stars,
       latitude,
       longitude,
@@ -45,47 +48,93 @@ export const createAccommodation = async (req, res) => {
       cnpj,
     } = req.body;
 
-    
-    if (!name || !type || !stars || !latitude || !longitude || !address || !city || !state || !country || !placeId) {
-      return res.status(400).json({ error: 'Campos obrigatórios estão faltando.' });
+    if (
+      !name ||
+      !type || 
+      !stars ||
+      !latitude ||
+      !longitude ||
+      !address ||
+      !city ||
+      !state ||
+      !country ||
+      !placeId ||
+      !cnpj
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: 'Campos obrigatórios ausentes.',
+      });
     }
 
-    const query = `
-      INSERT INTO hotels 
-      (name, type, stars, latitude, longitude, description, address, district, city, state, country, placeId, thumb, images, amenities, pois, reviews, cnpj, createdAt, updatedAt)
-      VALUES 
-      (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
-    `;
+    const validTypes = ['hotel', 'resort', 'hostel', 'albergue', 'pousada', 'hotel fazenda', 'flat'];
+    if (!validTypes.includes(type)) {
+      return res.status(400).json({
+        success: false,
+        message: `Tipo inválido. Os tipos permitidos são: ${validTypes.join(', ')}.`,
+      });
+    }
 
-    await sequelize.query(query, {
-      replacements: [
-        name,
-        type,
-        stars,
-        latitude,
-        longitude,
-        description,
-        address,
-        district,
-        city,
-        state,
-        country,
-        placeId,
-        thumb,
-        JSON.stringify(images || null),
-        JSON.stringify(amenities || null),
-        JSON.stringify(pois || null),
-        JSON.stringify(reviews || null),
-        cnpj || null,
-      ],
+    const cnpjRegex = /^\d{14}$/;
+    if (cnpj && !cnpjRegex.test(cnpj)) {
+      return res.status(400).json({
+        success: false,
+        message: 'CNPJ inválido. Deve conter 14 dígitos numéricos.',
+      });
+    }
+
+    const latitudeNum = parseFloat(latitude);
+    const longitudeNum = parseFloat(longitude);
+    if (
+      isNaN(latitudeNum) ||
+      isNaN(longitudeNum) ||
+      latitudeNum < -90 ||
+      latitudeNum > 90 ||
+      longitudeNum < -180 ||
+      longitudeNum > 180
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: 'Coordenadas geográficas inválidas.',
+      });
+    }
+
+    const newHotel = await Hotel.create({
+      name,
+      type, 
+      stars,
+      latitude,
+      longitude,
+      description,
+      address,
+      district,
+      city,
+      state,
+      country,
+      placeId,
+      thumb,
+      images,
+      amenities,
+      pois,
+      reviews,
+      cnpj,
     });
 
-    res.status(201).json({ message: 'Acomodação criada com sucesso!' });
+    return res.status(201).json({
+      success: true,
+      message: 'acomodação criado com sucesso!',
+      data: newHotel,
+    });
   } catch (error) {
-    console.error('Erro ao criar acomodação:', error);
-    res.status(500).json({ error: 'Erro ao inserir dados no banco.' });
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Erro ao criar o hotel.',
+      error: error.message,
+    });
   }
 };
+
 
 export const updateAccommodation = async (req, res) => {
   try {

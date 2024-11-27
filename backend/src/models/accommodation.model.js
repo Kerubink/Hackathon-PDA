@@ -11,6 +11,10 @@ const Hotel = sequelize.define('Hotel', {
     type: DataTypes.STRING(255),
     allowNull: false,
   },
+  type: {
+    type: DataTypes.ENUM('hotel', 'resort', 'hostel', 'pousada', 'hotel fazenda', 'flat'),
+    allowNull: false,
+  },
   stars: {
     type: DataTypes.INTEGER,
     allowNull: false,
